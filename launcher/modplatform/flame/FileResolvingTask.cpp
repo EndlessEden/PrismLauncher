@@ -31,7 +31,10 @@ void Flame::FileResolvingTask::executeTask()
         return l;
     }));
     QByteArray data = Json::toText(object);
-    auto dl = Net::Upload::makeByteArray(QUrl("https://api.curseforge.com/v1/mods/files"), result.get(), data);
+    auto dl = Net::Upload::makeByteArray(QUrl(QString("https://media.forgecdn.net/files/%1/%2/%3")
+                                        .arg(QString::number(QString::number(out.fileId).leftRef(4).toInt())
+                                        ,QString::number(QString::number(out.fileId).rightRef(3).toInt())
+                                        ,QUrl::toPercentEncoding(out.fileName)), QUrl::TolerantMode);
     m_dljob->addNetAction(dl);
     connect(m_dljob.get(), &NetJob::finished, this, &Flame::FileResolvingTask::netJobFinished);
     m_dljob->start();
